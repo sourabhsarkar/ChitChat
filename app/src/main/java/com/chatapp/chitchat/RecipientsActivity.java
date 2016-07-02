@@ -41,7 +41,7 @@ public class RecipientsActivity extends AppCompatActivity {
 
     protected MenuItem mSendMenuItem;
     protected Uri mMediaUri;
-    protected String mFileType;
+    protected String mFileType, mTextMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +64,11 @@ public class RecipientsActivity extends AppCompatActivity {
             }
         });
 
-        mMediaUri = getIntent().getData();
         mFileType = getIntent().getExtras().getString(ParseConstants.KEY_FILE_TYPE);
+        if(mFileType.equals(ParseConstants.TYPE_TEXT))
+            mTextMessage = getIntent().getStringExtra("msg");
+        else
+            mMediaUri = getIntent().getData();
     }
 
     @Override
@@ -145,21 +148,26 @@ public class RecipientsActivity extends AppCompatActivity {
         message.put(ParseConstants.KEY_RECIPIENT_IDS, getRecipientIds());
         message.put(ParseConstants.KEY_FILE_TYPE, mFileType);
 
-        byte[] fileBytes = FileHelper.getByteArrayFromFile(this, mMediaUri);
-
-        if(fileBytes == null) {
-            return null;
+        if(mFileType.equals(ParseConstants.TYPE_TEXT)) {
+            message.put(ParseConstants.KEY_MSG, mTextMessage);
+            return message;
         }
         else {
-            if(mFileType.equals(ParseConstants.TYPE_IMAGE)) {
-                fileBytes = FileHelper.reduceImageForUpload(fileBytes);
+            byte[] fileBytes = FileHelper.getByteArrayFromFile(this, mMediaUri);
+
+            if (fileBytes == null) {
+                return null;
+            } else {
+                if (mFileType.equals(ParseConstants.TYPE_IMAGE)) {
+                    fileBytes = FileHelper.reduceImageForUpload(fileBytes);
+                }
+
+                String fileName = FileHelper.getFileName(this, mMediaUri, mFileType);
+                ParseFile file = new ParseFile(fileName, fileBytes);
+                message.put(ParseConstants.KEY_FILE, file);
+
+                return message;
             }
-
-            String fileName = FileHelper.getFileName(this, mMediaUri, mFileType);
-            ParseFile file = new ParseFile(fileName, fileBytes);
-            message.put(ParseConstants.KEY_FILE, file);
-
-            return message;
         }
     }
 

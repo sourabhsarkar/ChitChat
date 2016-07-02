@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -74,7 +76,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             switch (i) {
-                case 0: //Take picture
+                case 0: //Send message
+                    final EditText input = new EditText(MainActivity.this);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
+                    input.setLayoutParams(lp);
+                    AlertDialog.Builder msgDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    msgDialogBuilder.setTitle("New Message")
+                    .setTitle("Enter message")
+                    .setView(input)
+                    .setNeutralButton("Send", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent recipientsIntent = new Intent(MainActivity.this,RecipientsActivity.class);
+                            String fileType = ParseConstants.TYPE_TEXT;
+                            recipientsIntent.putExtra(ParseConstants.KEY_FILE_TYPE, fileType);
+                            recipientsIntent.putExtra("msg",input.getText().toString());
+                            startActivity(recipientsIntent);
+                        }
+                    });
+                    AlertDialog msgDialog = msgDialogBuilder.create();
+                    msgDialog.show();
+                    break;
+                case 1: //Take picture
                     Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
                     if(mMediaUri == null) {
@@ -86,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST);
                     }
                     break;
-                case 1: //Take video
+                case 2: //Take video
                     Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
                     if(mMediaUri == null) {
@@ -100,12 +125,12 @@ public class MainActivity extends AppCompatActivity {
                         startActivityForResult(takeVideoIntent, TAKE_VIDEO_REQUEST);
                     }
                     break;
-                case 2: //Choose picture
+                case 3: //Choose picture
                     Intent choosePhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     choosePhotoIntent.setType("image/*");
                     startActivityForResult(choosePhotoIntent, PICK_PHOTO_REQUEST);
                     break;
-                case 3: //Choose video
+                case 4: //Choose video
                     Intent chooseVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     chooseVideoIntent.setType("video/*");
                     Toast.makeText(MainActivity.this, R.string.video_file_size_warning, Toast.LENGTH_SHORT).show();

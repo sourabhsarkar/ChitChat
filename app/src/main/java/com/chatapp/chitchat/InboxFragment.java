@@ -1,6 +1,8 @@
 package com.chatapp.chitchat;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,9 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -71,20 +77,37 @@ public class InboxFragment extends android.support.v4.app.ListFragment{
 
         ParseObject message = mMessages.get(position);
         String messageType = message.getString(ParseConstants.KEY_FILE_TYPE);
-        ParseFile file = message.getParseFile(ParseConstants.KEY_FILE);
-        Uri fileUri = Uri.parse(file.getUrl());
+        ParseFile file;
+        if(messageType.equals(ParseConstants.TYPE_TEXT)) {
 
-        if (messageType.equals(ParseConstants.TYPE_IMAGE)) {
-            // view the image
-            Intent intent = new Intent(getActivity(), ViewImageActivity.class);
-            intent.setData(fileUri);
-            startActivity(intent);
+            final TextView output = new TextView(getActivity());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            output.setLayoutParams(lp);
+            output.setText(message.getString(ParseConstants.KEY_MSG));
+            AlertDialog.Builder msgDialogBuilder = new AlertDialog.Builder(getActivity());
+            msgDialogBuilder.setTitle("New Message")
+                    .setTitle("Message")
+                    .setView(output);
+            AlertDialog msgDialog = msgDialogBuilder.create();
+            msgDialog.show();
         }
         else {
-            // view the video
-            Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
-            intent.setDataAndType(fileUri, "video/*");
-            startActivity(intent);
+            file = message.getParseFile(ParseConstants.KEY_FILE);
+            Uri fileUri = Uri.parse(file.getUrl());
+
+            if (messageType.equals(ParseConstants.TYPE_IMAGE)) {
+                // view the image
+                Intent intent = new Intent(getActivity(), ViewImageActivity.class);
+                intent.setData(fileUri);
+                startActivity(intent);
+            } else {
+                // view the video
+                Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
+                intent.setDataAndType(fileUri, "video/*");
+                startActivity(intent);
+            }
         }
 
         // Delete it!
