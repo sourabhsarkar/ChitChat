@@ -3,41 +3,34 @@ package com.chatapp.chitchat;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.parse.FindCallback;
-import com.parse.ParseAnalytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -77,27 +70,27 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(DialogInterface dialogInterface, int i) {
             switch (i) {
                 case 0: //Send message
-                    final EditText input = new EditText(MainActivity.this);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT);
-                    input.setLayoutParams(lp);
-                    AlertDialog.Builder msgDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                    msgDialogBuilder.setTitle("New Message")
-                    .setTitle("Enter message")
-                    .setView(input)
-                    .setNeutralButton("Send", new DialogInterface.OnClickListener() {
+                    View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_msg_send, null);
+                    final EditText input = (EditText)view.findViewById(R.id.sendEditText);
+                    final ImageView sendButton = (ImageView)view.findViewById(R.id.sendMsgButton);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setView(view);
+                    final AlertDialog dialog = builder.create();
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
+
+                    sendButton.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent recipientsIntent = new Intent(MainActivity.this,RecipientsActivity.class);
+                        public void onClick(View view) {
+                            Intent recipientsIntent = new Intent(MainActivity.this, RecipientsActivity.class);
                             String fileType = ParseConstants.TYPE_TEXT;
                             recipientsIntent.putExtra(ParseConstants.KEY_FILE_TYPE, fileType);
-                            recipientsIntent.putExtra("msg",input.getText().toString());
+                            recipientsIntent.putExtra("msg", input.getText().toString());
+                            dialog.dismiss();
                             startActivity(recipientsIntent);
                         }
                     });
-                    AlertDialog msgDialog = msgDialogBuilder.create();
-                    msgDialog.show();
                     break;
                 case 1: //Take picture
                     Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -320,11 +313,19 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, EditFriendsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.action_camera:
+            case R.id.action_chat:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setItems(R.array.camera_choices, mDialogListener);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                break;
+            case R.id.action_refresh:
+                Fragment fragment = (Fragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
+                // based on the current position you can then cast the page to the correct
+                // class and call the method:
+                if (mViewPager.getCurrentItem() == 0 && fragment != null) {
+                    ((InboxFragment)fragment).refreshInbox();
+                }
                 break;
         }
 

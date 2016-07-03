@@ -6,6 +6,6 @@
         android:orderInCategory="100"
         app:showAsAction="always"
         android:title="@string/menu_send_label"
-        android:icon="@drawable/ic_action_send_now"
+        android:icon="@drawable/ic_action_send_now_light"
         android:visible="false"/>
 </menu>

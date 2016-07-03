@@ -24,7 +24,8 @@
     <string name="error_title">We\'re sorry!</string>
     <string name="title_activity_main2">Main2Activity</string>
 
-    <string name="menu_camera_label">Camera</string>
+    <string name="menu_chat_label">New Chat</string>
+    <string name="menu_refresh_label">Refresh Inbox</string>
     <string name="error_external_storage">There was a problem accessing your device\'s external storage.</string>
     <string name="general_error">Sorry, there was a error!</string>
     <string name="video_file_size_warning">The selected video must be less than 10 MB.</string>

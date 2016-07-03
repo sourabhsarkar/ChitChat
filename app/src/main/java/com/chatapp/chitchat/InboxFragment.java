@@ -4,13 +4,17 @@ package com.chatapp.chitchat;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,7 +50,10 @@ public class InboxFragment extends android.support.v4.app.ListFragment{
         super.onResume();
 
         MainActivity.progressBar.setVisibility(View.VISIBLE);
+        refreshInbox();
+    }
 
+    public void refreshInbox() {
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(ParseConstants.CLASS_MESSAGES);
         query.whereEqualTo(ParseConstants.KEY_RECIPIENT_IDS, ParseUser.getCurrentUser().getObjectId());
         query.addDescendingOrder(ParseConstants.KEY_CREATED_AT);
@@ -80,18 +87,24 @@ public class InboxFragment extends android.support.v4.app.ListFragment{
         ParseFile file;
         if(messageType.equals(ParseConstants.TYPE_TEXT)) {
 
-            final TextView output = new TextView(getActivity());
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            output.setLayoutParams(lp);
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_msg_received, null);
+            final TextView output = (TextView)view.findViewById(R.id.receivedTextView);
+            final ImageView closeButton = (ImageView)view.findViewById(R.id.closeButton);
             output.setText(message.getString(ParseConstants.KEY_MSG));
-            AlertDialog.Builder msgDialogBuilder = new AlertDialog.Builder(getActivity());
-            msgDialogBuilder.setTitle("New Message")
-                    .setTitle("Message")
-                    .setView(output);
-            AlertDialog msgDialog = msgDialogBuilder.create();
-            msgDialog.show();
+            output.setMovementMethod(new ScrollingMovementMethod());
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(view);
+            final AlertDialog dialog = builder.create();
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+
+            closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
         }
         else {
             file = message.getParseFile(ParseConstants.KEY_FILE);

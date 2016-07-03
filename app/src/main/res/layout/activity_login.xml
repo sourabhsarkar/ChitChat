@@ -26,7 +26,8 @@
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login_button_label" />
+            android:text="@string/login_button_label"
+            android:background="@color/colorPrimaryDark"/>
 
         <TextView
             android:id="@+id/signUpText"
@@ -34,5 +35,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:text="@string/sign_up_text"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_gravity="center_horizontal" />
 </LinearLayout>

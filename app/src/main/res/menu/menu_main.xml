@@ -11,8 +11,13 @@
         android:title="@string/menu_logout_label"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_camera"
-        android:title="@string/menu_camera_label"
-        android:icon="@drawable/ic_action_camera"
+        android:id="@+id/action_refresh"
+        android:title="@string/menu_refresh_label"
+        android:icon="@drawable/ic_action_refresh"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_chat"
+        android:title="@string/menu_chat_label"
+        android:icon="@drawable/ic_action_chat_light"
         app:showAsAction="always" />
 </menu>
