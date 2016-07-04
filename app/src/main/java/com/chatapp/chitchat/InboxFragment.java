@@ -1,8 +1,6 @@
 package com.chatapp.chitchat;
 
-
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,21 +10,16 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +69,7 @@ public class InboxFragment extends android.support.v4.app.ListFragment{
                 }
             }
         });
+        Toast.makeText(getActivity(), "Inbox refreshed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
