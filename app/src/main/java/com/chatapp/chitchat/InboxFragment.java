@@ -54,7 +54,7 @@ public class InboxFragment extends android.support.v4.app.ListFragment{
             @Override
             public void done(List<ParseObject> messages, ParseException e) {
                 MainActivity.progressBar.setVisibility(View.GONE);
-
+                Toast.makeText(getActivity(), "Inbox refreshed", Toast.LENGTH_SHORT).show();
                 if (e == null) {
                     // We found a message
                     mMessages = messages;
@@ -69,7 +69,6 @@ public class InboxFragment extends android.support.v4.app.ListFragment{
                 }
             }
         });
-        Toast.makeText(getActivity(), "Inbox refreshed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
